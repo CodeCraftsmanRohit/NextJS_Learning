@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { log } from "console";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -13,6 +12,7 @@ export default function SignupPage() {
     password: "",
     username: "",
   });
+
   const [buttonDisabled, setButtonDisabled] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
 
@@ -20,67 +20,96 @@ export default function SignupPage() {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/signup", user);
-      console.log("Signup response:", response.data);
+      toast.success("Account created 🎉");
       router.push("/login");
-      toast.success("Signup successful!");
     } catch (error: any) {
-      toast.error("Something went wrong!", error.message);
-      console.log("Signup error :", error.message);
+      toast.error(error.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (
-      user.email.length > 0 &&
-      user.password.length > 0 &&
-      user.username.length > 0
-    ) {
-      setButtonDisabled(false);
-    } else {
-      setButtonDisabled(true);
-    }
+    setButtonDisabled(!(user.email && user.password && user.username));
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>{loading ? "Processing" : "Signup"}</h1>
-      <hr />
-      <label htmlFor="username">username</label>
-      <input
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-        id="username"
-        type="text"
-        value={user.username}
-        onChange={(e) => setUser({ ...user, username: e.target.value })}
-        placeholder="username"
-      />
-      <label htmlFor="email">email</label>
-      <input
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-        id="email"
-        type="text"
-        value={user.email}
-        onChange={(e) => setUser({ ...user, email: e.target.value })}
-        placeholder="email"
-      />
-      <label htmlFor="password">password</label>
-      <input
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-        id="password"
-        type="password"
-        value={user.password}
-        onChange={(e) => setUser({ ...user, password: e.target.value })}
-        placeholder="password"
-      />
-      <button
-        onClick={onSignup}
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 cursor-pointer disabled:opacity-40"
-      >
-        {buttonDisabled ? "No signup" : "Signup"}
-      </button>
-      <Link href="/login">Visit login page</Link>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black">
+      {/* Card */}
+      <div className="w-full max-w-md rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl p-8">
+
+        {/* Heading */}
+        <h1 className="text-3xl font-bold text-center text-white mb-2">
+          Create Account
+        </h1>
+        <p className="text-center text-gray-400 mb-6">
+          Join us and start your journey 🚀
+        </p>
+
+        {/* Username */}
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-1">Username</label>
+          <input
+            type="text"
+            value={user.username}
+            onChange={(e) => setUser({ ...user, username: e.target.value })}
+            placeholder="your_username"
+            className="w-full rounded-lg bg-black/40 border border-gray-700 p-3 text-white placeholder-gray-500
+                       focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-1">Email</label>
+          <input
+            type="email"
+            value={user.email}
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            placeholder="you@example.com"
+            className="w-full rounded-lg bg-black/40 border border-gray-700 p-3 text-white placeholder-gray-500
+                       focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="mb-6">
+          <label className="block text-gray-300 mb-1">Password</label>
+          <input
+            type="password"
+            value={user.password}
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
+            placeholder="••••••••"
+            className="w-full rounded-lg bg-black/40 border border-gray-700 p-3 text-white placeholder-gray-500
+                       focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          />
+        </div>
+
+        {/* Button */}
+        <button
+          onClick={onSignup}
+          disabled={buttonDisabled || loading}
+          className={`w-full rounded-lg py-3 font-semibold text-white transition-all
+            ${
+              buttonDisabled || loading
+                ? "bg-gray-700 cursor-not-allowed opacity-50"
+                : "bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-[1.02] hover:shadow-lg cursor-pointer"
+            }`}
+        >
+          {loading ? "Creating account..." : "Sign up"}
+        </button>
+
+        {/* Footer */}
+        <p className="text-center text-gray-400 mt-6">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-purple-400 hover:text-purple-300 underline transition"
+          >
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

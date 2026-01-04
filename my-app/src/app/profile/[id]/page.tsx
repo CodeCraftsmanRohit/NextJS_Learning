@@ -3,18 +3,36 @@ export default async function UserProfile({
 }: {
   params: { id: string }
 }) {
-  const { id } = await params
+  const { id } = await params;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>Profile</h1>
-      <hr />
-      <p className="text-4xl">
-        Profile page
-        <span className="p-2 ml-2 rounded bg-orange-500 text-black">
+   <div className="min-h-screen flex items-center justify-center
+                    bg-gradient-to-br from-black via-gray-900 to-black">
+
+      <div className="w-full max-w-xl rounded-2xl bg-white/10
+                      backdrop-blur-xl border border-white/20
+                      shadow-2xl p-10 text-center">
+
+        <h1 className="text-4xl font-bold text-white mb-4">
+          User Profile
+        </h1>
+
+        <div className="h-px w-full bg-white/20 mb-6" />
+
+        <p className="text-gray-300 text-lg mb-4">
+          Profile ID
+        </p>
+
+        <span className="inline-block px-6 py-2 rounded-lg
+                         bg-orange-500 text-black text-xl font-bold
+                         shadow-md">
           {id}
         </span>
-      </p>
+
+        <p className="mt-6 text-gray-400">
+          This is a dynamic profile page
+        </p>
+      </div>
     </div>
   )
 }
